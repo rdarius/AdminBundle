@@ -1,5 +1,7 @@
 # PlatformAdminBundle
 
+**This is not a maintained package! Changes made to comply with requirements for ongoing project**
+
 This Bundle implement admin platform based on Sylius components.
 
 ## Installation
