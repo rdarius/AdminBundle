@@ -5,12 +5,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "sylius/grid-bundle": "v1.13.1",
-        "sylius/locale-bundle": "v1.14.3",
-        "sylius/mailer-bundle": "v1.8.1",
+        "sylius/grid-bundle": "1.14.x-dev",
+        "sylius/locale-bundle": "v2.0.5",
+        "sylius/mailer-bundle": "v2.1.0",
         "sylius/resource-bundle": "v1.12.1",
-        "sylius/ui-bundle": "v1.14.3",
-        "sylius/user-bundle": "v1.14.3",
+        "sylius/ui-bundle": "v2.0.5",
+        "sylius/user-bundle": "v2.0.5",
         "symfony/process": "v7.2.*",
         "liip/imagine-bundle": "2.13.3"
     },
