@@ -1,5 +1,5 @@
 imports:
-    - { resource: "@SyliusLocaleBundle/Resources/config/services.yml" }
+    - { resource: "@SyliusLocaleBundle/Resources/config/services.xml" }
 #    - { resource: "@PlatformAdminBundle/Resources/config/grids/locale.yml" }
 
 sylius_locale:
