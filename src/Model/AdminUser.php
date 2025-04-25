@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Platform\Bundle\AdminBundle\Model;
 
 use Sylius\Component\User\Model\User;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-class AdminUser extends User implements AdminUserInterface, PasswordAuthenticatedUserInterface
+class AdminUser extends User implements AdminUserInterface
 {
     protected ?string $firstName = null;
 
@@ -50,5 +49,10 @@ class AdminUser extends User implements AdminUserInterface, PasswordAuthenticate
     public function setLocaleCode(?string $code): void
     {
         $this->localeCode = $code;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 }
