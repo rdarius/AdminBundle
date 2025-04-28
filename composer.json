@@ -11,7 +11,7 @@
         "sylius/resource-bundle": "v1.13.0-ALPHA.3",
         "sylius/ui-bundle": "v2.0.5",
         "sylius/user-bundle": "v2.0.5",
-        "symfony/process": "v7.1.*",
+        "symfony/process": "v7.2.*",
         "liip/imagine-bundle": "2.13.3"
     },
     "config": {
