@@ -11,7 +11,6 @@
 
         <service id="admin_platform.repository.admin_user" class="Sylius\Bundle\UserBundle\Doctrine\ORM\UserRepository">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="doctrine.orm.entity_manager.class_metadata_factory" />
             <argument>Platform\Bundle\AdminBundle\Model\AdminUser</argument>
         </service>
 
