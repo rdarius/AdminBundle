@@ -13,7 +13,7 @@
             <argument type="service" id="admin_platform.setup.locale" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="admin_platform.factory.admin_user" />
-            <argument type="service" id="sylius.repository.admin" />
+            <argument type="service" id="sylius.repository.admin_user" />
             <argument type="service" id="validator" />
 
             <tag name="console.command" command="admin-platform:install:setup" />
