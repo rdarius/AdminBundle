@@ -4,7 +4,7 @@
     <services>
 
         <service id="admin_platform.event_listener.canonicalizer" class="Platform\Bundle\AdminBundle\EventListener\CanonicalizerListener">
-            <argument type="service" id="sylius.canonicalizer" />
+            <argument type="service" id="sylius.user.canonicalizer" />
 
             <tag name="doctrine.event_listener" event="prePersist" />
             <tag name="doctrine.event_listener" event="preUpdate" />
