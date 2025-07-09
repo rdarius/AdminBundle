@@ -8,8 +8,8 @@
         <service id="admin_platform.command.setup" class="Platform\Bundle\AdminBundle\Command\SetupCommand">
             <argument type="service" id="admin_platform.setup.locale" />
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="sylius.factory.admin_user" />
-            <argument type="service" id="sylius.repository.admin_user" />
+            <argument type="service" id="Sylius\Component\Core\Factory\AdminUserFactory" />
+            <argument type="service" id="Sylius\Component\Core\Repository\AdminUserRepositoryInterface" />
             <argument type="service" id="validator" />
 
             <tag name="console.command" command="admin-platform:install:setup" />
