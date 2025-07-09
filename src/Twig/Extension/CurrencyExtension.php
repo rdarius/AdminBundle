@@ -2,22 +2,27 @@
 
 namespace Platform\Bundle\AdminBundle\Twig\Extension;
 
-use Symfony\Component\Intl\Currencies;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Symfony\Component\Intl\Intl;
 
-class CurrencyExtension extends AbstractExtension
+class CurrencyExtension extends \Twig_Extension
 {
-    /** {@inheritdoc} */
-    public function getFilters(): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
     {
         return [
-            new TwigFilter('sylius_currency_symbol', [$this, 'convertCurrencyCodeToSymbol']),
+            new \Twig_SimpleFilter('sylius_currency_symbol', [$this, 'convertCurrencyCodeToSymbol']),
         ];
     }
 
-    public function convertCurrencyCodeToSymbol(string $code): string
+    /**
+     * @param string $code
+     *
+     * @return null|string
+     */
+    public function convertCurrencyCodeToSymbol($code)
     {
-        return Currencies::getSymbol($code);
+        return Intl::getCurrencyBundle()->getCurrencySymbol($code);
     }
 }

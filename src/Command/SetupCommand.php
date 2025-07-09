@@ -3,12 +3,10 @@
 namespace Platform\Bundle\AdminBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use InvalidArgumentException;
 use Platform\Bundle\AdminBundle\Installer\Setup\LocaleSetup;
 use Platform\Bundle\AdminBundle\Model\AdminUserInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,31 +14,42 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Webmozart\Assert\Assert;
 
 class SetupCommand extends AbstractInstallCommand
 {
-    protected const DEFAULT_USER_EMAIL = 'admin-platform@example.com';
-    protected const DEFAULT_USER_PASSWORD = 'admin-platform';
+    const DEFAULT_USER_EMAIL = 'admin-platform@example.com';
+    const DEFAULT_USER_PASSWORD = 'admin-platform';
 
-    private LocaleSetup $localeSetup;
+    /**
+     * @var LocaleSetup
+     */
+    private $localeSetup;
 
-    private EntityManagerInterface $userManager;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $userManager;
 
-    private FactoryInterface $userFactory;
+    /**
+     * @var FactoryInterface
+     */
+    private $userFactory;
 
-    private UserRepositoryInterface $userRepository;
+    /**
+     * @var UserRepositoryInterface
+     */
+    private $userRepository;
 
-    private ValidatorInterface $validator;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
 
-    public function __construct(
-        LocaleSetup $localeSetup,
-        EntityManagerInterface $userManager,
-        FactoryInterface $userFactory,
-        UserRepositoryInterface $userRepository,
-        ValidatorInterface $validator
-    ) {
+    public function __construct(LocaleSetup $localeSetup, EntityManagerInterface $userManager, FactoryInterface $userFactory, UserRepositoryInterface $userRepository, ValidatorInterface $validator)
+    {
         parent::__construct();
 
         $this->localeSetup = $localeSetup;
@@ -50,36 +59,47 @@ class SetupCommand extends AbstractInstallCommand
         $this->validator = $validator;
     }
 
-    protected function configure(): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
     {
         $this
             ->setName('admin-platform:install:setup')
             ->setDescription('Admin platform configuration setup.')
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The <info>%command.name%</info> command allows user to configure basic Admin platform data.
 EOT
-            );
+            )
+        ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $locale = $this->localeSetup->setup($input, $output);
 
         $this->setupAdministratorUser($input, $output, $locale->getCode());
-
-        return Command::SUCCESS;
     }
 
-    private function setupAdministratorUser(InputInterface $input, OutputInterface $output, ?string $localeCode): void
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param $localeCode
+     *
+     * @return int
+     */
+    private function setupAdministratorUser(InputInterface $input, OutputInterface $output, $localeCode)
     {
         $outputStyle = new SymfonyStyle($input, $output);
         $outputStyle->writeln('Create your administrator account.');
 
         try {
             $user = $this->configureNewUser($this->userFactory->createNew(), $input, $output);
-        } catch (InvalidArgumentException $exception) {
-            return;
+        } catch (\InvalidArgumentException $exception) {
+            return 0;
         }
 
         $user->setEnabled(true);
@@ -92,11 +112,15 @@ EOT
         $outputStyle->newLine();
     }
 
-    private function configureNewUser(
-        AdminUserInterface $user,
-        InputInterface $input,
-        OutputInterface $output
-    ): AdminUserInterface {
+    /**
+     * @param AdminUserInterface $user
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return AdminUserInterface
+     */
+    private function configureNewUser(AdminUserInterface $user, InputInterface $input, OutputInterface $output)
+    {
         if ($input->getOption('no-interaction')) {
             Assert::null($this->userRepository->findOneByEmail(self::DEFAULT_USER_EMAIL));
 
@@ -111,7 +135,7 @@ EOT
         do {
             $question = $this->createEmailQuestion($output);
             $email = $questionHelper->ask($input, $output, $question);
-            $exists = $this->userRepository->findOneByEmail($email) !== null;
+            $exists = null !== $this->userRepository->findOneByEmail($email);
 
             if ($exists) {
                 $output->writeln('<error>E-Mail is already in use!</error>');
@@ -124,27 +148,37 @@ EOT
         return $user;
     }
 
-    private function createEmailQuestion(OutputInterface $output): Question
+    /**
+     * @param OutputInterface $output
+     *
+     * @return Question
+     */
+    private function createEmailQuestion(OutputInterface $output)
     {
         return (new Question('E-mail:'))
-            ->setValidator(
-                function ($value) use ($output) {
-                    $errors = $this->validator->validate((string)$value, [new Email(), new NotBlank()]);
-                    foreach ($errors as $error) {
-                        throw new \DomainException($error->getMessage());
-                    }
-
-                    return $value;
+            ->setValidator(function ($value) use ($output) {
+                /** @var ConstraintViolationListInterface $errors */
+                $errors = $this->validator->validate((string) $value, [new Email(), new NotBlank()]);
+                foreach ($errors as $error) {
+                    throw new \DomainException($error->getMessage());
                 }
-            )
+
+                return $value;
+            })
             ->setMaxAttempts(3);
     }
 
-    private function getAdministratorPassword(InputInterface $input, OutputInterface $output): string
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return mixed
+     */
+    private function getAdministratorPassword(InputInterface $input, OutputInterface $output)
     {
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-        $validator = $this->getPasswordQuestionValidator();
+        $validator = $this->getPasswordQuestionValidator($output);
 
         do {
             $passwordQuestion = $this->createPasswordQuestion('Choose password:', $validator);
@@ -160,9 +194,15 @@ EOT
         return $password;
     }
 
-    private function getPasswordQuestionValidator()
+    /**
+     * @param OutputInterface $output
+     *
+     * @return \Closure
+     */
+    private function getPasswordQuestionValidator(OutputInterface $output)
     {
-        return function ($value) {
+        return function ($value) use ($output) {
+            /** @var ConstraintViolationListInterface $errors */
             $errors = $this->validator->validate($value, [new NotBlank()]);
             foreach ($errors as $error) {
                 throw new \DomainException($error->getMessage());
@@ -172,7 +212,13 @@ EOT
         };
     }
 
-    private function createPasswordQuestion(string $message, \Closure $validator): Question
+    /**
+     * @param string $message
+     * @param \Closure $validator
+     *
+     * @return Question
+     */
+    private function createPasswordQuestion($message, \Closure $validator)
     {
         return (new Question($message))
             ->setValidator($validator)

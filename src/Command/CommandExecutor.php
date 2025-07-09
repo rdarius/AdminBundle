@@ -11,12 +11,26 @@ use Symfony\Component\Process\Exception\RuntimeException;
 
 class CommandExecutor
 {
-    protected InputInterface $input;
+    /**
+     * @var InputInterface
+     */
+    protected $input;
 
-    protected OutputInterface $output;
+    /**
+     * @var OutputInterface
+     */
+    protected $output;
 
-    protected Application $application;
+    /**
+     * @var Application
+     */
+    protected $application;
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param Application     $application
+     */
     public function __construct(InputInterface $input, OutputInterface $output, Application $application)
     {
         $this->input = $input;
@@ -24,7 +38,16 @@ class CommandExecutor
         $this->application = $application;
     }
 
-    public function runCommand($command, $parameters = [], OutputInterface $output = null): self
+    /**
+     * @param $command
+     * @param array $parameters
+     * @param OutputInterface $output
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    public function runCommand($command, $parameters = [], OutputInterface $output = null)
     {
         $parameters = array_merge(
             ['command' => $command],
@@ -35,23 +58,29 @@ class CommandExecutor
         $this->application->setAutoExit(false);
         $exitCode = $this->application->run(new ArrayInput($parameters), $output ?: new NullOutput());
 
-        if ($exitCode === 1) {
+        if (1 === $exitCode) {
             throw new RuntimeException('This command terminated with a permission error');
         }
 
-        if ($exitCode !== 0) {
+        if (0 !== $exitCode) {
             $this->application->setAutoExit(true);
 
             $errorMessage = sprintf('The command terminated with an error code: %u.', $exitCode);
             $this->output->writeln("<error>$errorMessage</error>");
+            $exception = new \Exception($errorMessage, $exitCode);
 
-            throw new \Exception($errorMessage, $exitCode);
+            throw $exception;
         }
 
         return $this;
     }
 
-    protected function getDefaultParameters(): array
+    /**
+     * Get default parameters.
+     *
+     * @return array
+     */
+    protected function getDefaultParameters()
     {
         $defaultParameters = ['--no-debug' => true];
 

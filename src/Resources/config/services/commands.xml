@@ -5,20 +5,11 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="admin_platform.factory.admin_user" class="Sylius\Component\Resource\Factory\Factory">
-            <argument>Platform\Bundle\AdminBundle\Model\AdminUser</argument>
-        </service>
-
-        <service id="admin_platform.repository.admin_user" class="Sylius\Bundle\UserBundle\Doctrine\ORM\UserRepository">
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument>Platform\Bundle\AdminBundle\Model\AdminUser</argument>
-        </service>
-
         <service id="admin_platform.command.setup" class="Platform\Bundle\AdminBundle\Command\SetupCommand">
             <argument type="service" id="admin_platform.setup.locale" />
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="admin_platform.factory.admin_user" />
-            <argument type="service" id="admin_platform.repository.admin_user" />
+            <argument type="service" id="sylius.manager.admin_user" />
+            <argument type="service" id="sylius.factory.admin_user" />
+            <argument type="service" id="sylius.repository.admin_user" />
             <argument type="service" id="validator" />
 
             <tag name="console.command" command="admin-platform:install:setup" />

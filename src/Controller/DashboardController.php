@@ -4,22 +4,28 @@ declare(strict_types=1);
 
 namespace Platform\Bundle\AdminBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 
 class DashboardController
 {
-    private Environment $templating;
+    /**
+     * @var EngineInterface
+     */
+    private $templating;
 
-    public function __construct(Environment $templating)
+    /**
+     * DashboardController constructor.
+     *
+     * @param EngineInterface $templating
+     */
+    public function __construct(EngineInterface $templating)
     {
         $this->templating = $templating;
     }
 
     public function indexAction(): Response
     {
-        $template = $this->templating->render('@PlatformAdmin/Dashboard/index.html.twig');
-
-        return new Response($template);
+        return $this->templating->renderResponse('PlatformAdminBundle:Dashboard:index.html.twig');
     }
 }

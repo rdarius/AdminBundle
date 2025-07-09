@@ -7,33 +7,50 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Intl\Languages;
-
-use function trim;
-use function sprintf;
+use Symfony\Component\Intl\Intl;
 
 class LocaleSetup
 {
-    private RepositoryInterface $repository;
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
 
-    private FactoryInterface $factory;
+    /**
+     * @var FactoryInterface
+     */
+    private $factory;
 
-    private string $locale;
+    /**
+     * @var string
+     */
+    private $locale;
 
-    public function __construct(RepositoryInterface $repository, FactoryInterface $factory, string $locale)
+    /**
+     * @param RepositoryInterface $repository
+     * @param FactoryInterface $factory
+     * @param string $locale
+     */
+    public function __construct(RepositoryInterface $repository, FactoryInterface $factory, $locale)
     {
         $this->repository = $repository;
         $this->factory = $factory;
         $this->locale = trim($locale);
     }
 
-    public function setup(InputInterface $input, OutputInterface $output): LocaleInterface
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return LocaleInterface
+     */
+    public function setup(InputInterface $input, OutputInterface $output)
     {
         $name = $this->getLanguageName($this->locale);
         $output->writeln(sprintf('Adding <info>%s</info> locale.', $name));
         $existingLocale = $this->repository->findOneBy(['code' => $this->locale]);
 
-        if ($existingLocale !== null) {
+        if (null !== $existingLocale) {
             return $existingLocale;
         }
 
@@ -45,8 +62,13 @@ class LocaleSetup
         return $locale;
     }
 
-    private function getLanguageName(string $code): string
+    /**
+     * @param string $code
+     *
+     * @return string|null
+     */
+    private function getLanguageName($code)
     {
-        return Languages::getName($code);
+        return Intl::getLanguageBundle()->getLanguageName($code);
     }
 }

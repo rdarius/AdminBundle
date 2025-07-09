@@ -3,7 +3,7 @@
 {% block title %}Admin platform | {{ 'sylius.ui.administration_panel_login'|trans }}{% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('app') }}
+    {% include '@SyliusUi/_stylesheets.html.twig' with {'path': 'assets/admin/css/style.css'} %}
 {% endblock %}
 
 {% block content %}
@@ -11,5 +11,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    {% include '@SyliusUi/_javascripts.html.twig' with {'path': 'assets/admin/js/app.js'} %}
 {% endblock %}

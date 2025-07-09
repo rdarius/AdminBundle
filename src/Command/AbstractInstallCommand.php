@@ -8,16 +8,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractInstallCommand extends Command
 {
-    protected CommandExecutor $commandExecutor;
+    /**
+     * @var CommandExecutor
+     */
+    protected $commandExecutor;
 
-    protected function initialize(InputInterface $input, OutputInterface $output): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $application = $this->getApplication();
-
-        if ($application === null) {
-            return;
-        }
-
         $application->setCatchExceptions(false);
 
         $this->commandExecutor = new CommandExecutor(

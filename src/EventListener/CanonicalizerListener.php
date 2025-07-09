@@ -8,32 +8,45 @@ use Sylius\Component\User\Model\UserInterface;
 
 class CanonicalizerListener
 {
-    private CanonicalizerInterface $canonicalizer;
+    /**
+     * @var CanonicalizerInterface
+     */
+    private $canonicalizer;
 
+    /**
+     * @param CanonicalizerInterface $canonicalizer
+     */
     public function __construct(CanonicalizerInterface $canonicalizer)
     {
         $this->canonicalizer = $canonicalizer;
     }
 
-    public function prePersist(LifecycleEventArgs $event): void
+    /**
+     * @param LifecycleEventArgs $event
+     */
+    public function prePersist(LifecycleEventArgs $event)
     {
         $this->canonicalize($event);
     }
 
-    public function preUpdate(LifecycleEventArgs $event): void
+    /**
+     * @param LifecycleEventArgs $event
+     */
+    public function preUpdate(LifecycleEventArgs $event)
     {
         $this->canonicalize($event);
     }
 
-    private function canonicalize(LifecycleEventArgs $event): void
+    /**
+     * @param LifecycleEventArgs $event
+     */
+    private function canonicalize(LifecycleEventArgs $event)
     {
         $item = $event->getEntity();
 
-        if (!$item instanceof UserInterface) {
-            return;
+        if ($item instanceof UserInterface) {
+            $item->setUsernameCanonical($this->canonicalizer->canonicalize($item->getUsername()));
+            $item->setEmailCanonical($this->canonicalizer->canonicalize($item->getEmail()));
         }
-
-        $item->setUsernameCanonical($this->canonicalizer->canonicalize($item->getUsername()));
-        $item->setEmailCanonical($this->canonicalizer->canonicalize($item->getEmail()));
     }
 }

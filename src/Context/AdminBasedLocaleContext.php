@@ -11,22 +11,31 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class AdminBasedLocaleContext implements LocaleContextInterface
 {
-    private TokenStorageInterface $tokenStorage;
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
 
+    /**
+     * @param TokenStorageInterface $tokenStorage
+     */
     public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLocaleCode(): string
     {
         $token = $this->tokenStorage->getToken();
-        if ($token === null) {
+        if (null === $token) {
             throw new LocaleNotFoundException();
         }
 
         $adminUser = $token->getUser();
-        if (!$adminUser instanceof AdminUserInterface) {
+        if (false === $adminUser instanceof AdminUserInterface) {
             throw new LocaleNotFoundException();
         }
 

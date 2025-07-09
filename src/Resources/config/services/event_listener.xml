@@ -4,7 +4,7 @@
     <services>
 
         <service id="admin_platform.event_listener.canonicalizer" class="Platform\Bundle\AdminBundle\EventListener\CanonicalizerListener">
-            <argument type="service" id="sylius.user.canonicalizer" />
+            <argument type="service" id="sylius.canonicalizer" />
 
             <tag name="doctrine.event_listener" event="prePersist" />
             <tag name="doctrine.event_listener" event="preUpdate" />
@@ -12,7 +12,7 @@
 
         <service id="admin_platform.listener.password_updater" class="Sylius\Bundle\UserBundle\EventListener\PasswordUpdaterListener">
             <argument type="service" id="sylius.security.password_updater" />
-            <tag name="kernel.event_listener" event="sylius.admin_user.pre_update" method="genericEventUpdater" />
+            <tag name="kernel.event_listener" event="admin_platform.admin_user.pre_update" method="genericEventUpdater" />
         </service>
 
     </services>

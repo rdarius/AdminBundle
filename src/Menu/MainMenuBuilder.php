@@ -9,30 +9,48 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MainMenuBuilder
 {
-    protected const EVENT_NAME = 'admin_platform.menu.main';
+    const EVENT_NAME = 'admin_platform.menu.main';
 
-    private FactoryInterface $factory;
+    /**
+     * @var FactoryInterface
+     */
+    private $factory;
 
-    private EventDispatcherInterface $eventDispatcher;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
+    /**
+     * @param FactoryInterface $factory
+     * @param EventDispatcherInterface $eventDispatcher
+     */
     public function __construct(FactoryInterface $factory, EventDispatcherInterface $eventDispatcher)
     {
         $this->factory = $factory;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function createMenu(array $options): ItemInterface
+    /**
+     * @param array $options
+     *
+     * @return ItemInterface
+     */
+    public function createMenu(array $options)
     {
         $menu = $this->factory->createItem('root');
 
         $this->addConfigurationSubMenu($menu);
 
-        $this->eventDispatcher->dispatch(new MenuBuilderEvent($this->factory, $menu), self::EVENT_NAME);
+        $this->eventDispatcher->dispatch(self::EVENT_NAME, new MenuBuilderEvent($this->factory, $menu));
 
         return $menu;
     }
 
-    private function addConfigurationSubMenu(ItemInterface $menu): void
+    /**
+     * @param ItemInterface $menu
+     */
+    private function addConfigurationSubMenu(ItemInterface $menu)
     {
         $configuration = $menu
             ->addChild('configuration')
@@ -41,11 +59,13 @@ class MainMenuBuilder
         $configuration
             ->addChild('locales', ['route' => 'sylius_admin_locale_index'])
             ->setLabel('admin_platform.menu.main.configuration.locales')
-            ->setLabelAttribute('icon', 'translate');
+            ->setLabelAttribute('icon', 'translate')
+        ;
 
         $configuration
             ->addChild('admin_users', ['route' => 'sylius_admin_admin_user_index'])
             ->setLabel('admin_platform.menu.main.configuration.admin_users')
-            ->setLabelAttribute('icon', 'lock');
+            ->setLabelAttribute('icon', 'lock')
+        ;
     }
 }
