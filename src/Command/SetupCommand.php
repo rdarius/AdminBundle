@@ -33,7 +33,13 @@ class SetupCommand extends AbstractInstallCommand
 
     private ValidatorInterface $validator;
 
-    public function __construct(LocaleSetup $localeSetup, EntityManagerInterface $userManager, FactoryInterface $userFactory, UserRepositoryInterface $userRepository, ValidatorInterface $validator)
+    public function __construct(
+        LocaleSetup $localeSetup,
+        EntityManagerInterface $userManager,
+        FactoryInterface $userFactory,
+        UserRepositoryInterface $userRepository,
+        ValidatorInterface $validator
+    )
     {
         parent::__construct();
 
@@ -55,8 +61,7 @@ class SetupCommand extends AbstractInstallCommand
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command allows user to configure basic Admin platform data.
 EOT
-            )
-        ;
+            );
     }
 
     /**
@@ -125,7 +130,7 @@ EOT
     {
         return (new Question('E-mail:'))
             ->setValidator(function ($value) use ($output) {
-                $errors = $this->validator->validate((string) $value, [new Email(), new NotBlank()]);
+                $errors = $this->validator->validate((string)$value, [new Email(), new NotBlank()]);
                 foreach ($errors as $error) {
                     throw new \DomainException($error->getMessage());
                 }
