@@ -1,3 +1,4 @@
 admin_platform_admin_dashboard_index:
     path: /
+    controller: 'Platform\Bundle\AdminBundle\Controller\DashboardController::indexAction'
     defaults: { _controller: admin_platform.controller.dashboard:indexAction }
