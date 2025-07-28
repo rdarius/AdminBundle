@@ -9,48 +9,30 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MainMenuBuilder
 {
-    const EVENT_NAME = 'admin_platform.menu.main';
+    const string EVENT_NAME = 'admin_platform.menu.main';
 
-    /**
-     * @var FactoryInterface
-     */
-    private $factory;
+    private FactoryInterface $factory;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @param FactoryInterface $factory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(FactoryInterface $factory, EventDispatcherInterface $eventDispatcher)
     {
         $this->factory = $factory;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return ItemInterface
-     */
-    public function createMenu(array $options)
+    public function createMenu(array $options): ItemInterface
     {
         $menu = $this->factory->createItem('root');
 
         $this->addConfigurationSubMenu($menu);
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME, new MenuBuilderEvent($this->factory, $menu));
+        $this->eventDispatcher->dispatch(self::EVENT_NAME, MenuBuilderEvent::class);
 
         return $menu;
     }
 
-    /**
-     * @param ItemInterface $menu
-     */
-    private function addConfigurationSubMenu(ItemInterface $menu)
+    private function addConfigurationSubMenu(ItemInterface $menu): void
     {
         $configuration = $menu
             ->addChild('configuration')
