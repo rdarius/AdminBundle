@@ -27,7 +27,8 @@ class MainMenuBuilder
 
         $this->addConfigurationSubMenu($menu);
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME, MenuBuilderEvent::class);
+//        $this->eventDispatcher->dispatch(self::EVENT_NAME, new MenuBuilderEvent($this->factory, $menu));
+        $this->eventDispatcher->dispatch(new MenuBuilderEvent($this->factory, $menu), self::EVENT_NAME);
 
         return $menu;
     }
